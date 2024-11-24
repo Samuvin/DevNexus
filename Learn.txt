@@ -1,0 +1,4 @@
+npm i -g nodemon
+-g for global it will install on system level
+
+node_modules , package.json package.lock.json 
