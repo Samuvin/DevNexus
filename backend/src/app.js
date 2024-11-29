@@ -1,7 +1,8 @@
 const express = require("express");
 const { DBconnect } = require("./config/database");
 const { User } = require("./models/user");
-
+const { validateSignUpData } = require("./utils/validation");
+const bcrypt = require("bcrypt");
 require("dotenv").config();
 
 const app = express();
@@ -12,7 +13,17 @@ DBconnect();
 
 app.post("/signup", async (req, res) => {
 	try {
-		const user = new User(req.body);
+		validateSignUpData(req);
+		const { firstName, lastName, emailId, password } = req.body;
+		console.log(password);
+		const passwordHash = await bcrypt.hash(password, 10);
+
+		const user = new User({
+			firstName,
+			lastName,
+			emailId,
+			password: passwordHash,
+		});
 		await user.save();
 		res.status(201).send({
 			status: "success",
