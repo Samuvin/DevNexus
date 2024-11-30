@@ -2,3 +2,187 @@ npm i -g nodemon
 -g for global it will install on system level
 
 node_modules , package.json package.lock.json 
+
+
+app.use("/")-Wildcard matching
+It will handle everything that is the prefix of this handlers
+("/Hello")
+("/Helloi) not works 
+("/Hello")
+("/Hello/Hello") Works 
+
+Order of the code matters 
+
+When ever the request comes to server
+It starts matching the code from the top
+Order of the routing the codes is matter
+
+//Post call it will give the same result 
+
+
+"Use" will match all the HTTP mrthod API calls to the request
+
+
+app.get("/ab?c")
+b is optional 
+app.get("/ab+c")
+app.get("/ab*c")
+app.get("/a(bc)?c")
+app.get("/a(bc)+c")
+app.get("/a(bc)*c")
+app.get("/a/")=>Rejex
+
+request query
+request params
+Dynammic route
+
+If empty route handler without sending the response
+It will lead out to the infinite loop
+And After some time it will get time out
+
+One Route can also have multiple route candler 
+Suppose we are not sending the response then we have to automatically pass to the second handler 
+we have to use next()
+ 
+What is the use of middleware?
+The validate the api call The request has to be authorised 
+Does the user have permission to access that api
+In that place we have to write the check to validate the token
+
+Inorder to write the logic of checking the token in all the middleware 
+and then we can chain them
+
+middleware is a theroticial concept 
+
+app.use() =>handle all request 
+
+app.use("/admin")=>it will handle 
+/admin/get
+/admin/post 
+all starting with admin 
+
+all of the request needs to authorised 
+There are also third party middleware
+
+
+Mongoose=>To create modal to create schemas
+
+
+POST =>send data will be undefined first 
+       The data is send in forms of json 
+       But our server is unable to understand json 
+       so we use middleware (because it checks the incomming request and convert it into json to js object)
+       express provides a middleware
+       Reads the req and converts the json to js object and continue
+
+       //Any other data which is not in the schemas will be ignored 
+       options is an another object which has a object returnDocument which has paramater and they are before and After
+       if before then it will send the data of the older version 
+       after means after the update it will return the document
+       By default they are before
+
+Data Sanitization and schema validations 
+required=>true
+if required is set to true mongodb will throw error
+if its not given
+unique=>true 
+If the field is error it will throw a error
+We can use custom 
+Validators only run when the data is inserted
+When we are creating a new object then only it will run 
+
+We have to set this option on
+const user = await User.findByIdAndUpdate({ _id: userId }, data, {
+			returnDocument: "after",
+			runValidators: true,
+		});
+we have to explicitly set this option as the third argument
+
+We have timestamps so that it will store 
+When the document is inserted
+
+API LEVEL Validation 
+If the user is updating certain fields 
+We have to limit it to a certain range 
+
+
+Npm validator Which will valdiate our emails
+We can validate lot of data
+
+We should store the password in encrypted format 
+Nobody should read the encrypted password
+
+
+Bcrypt
+
+Askah@123
+We need a salt 
+salt is random string 
+We take the plain password and the random string 
+10 is the optimal number if increase it takes time 
+
+Once the access is logged in
+The user will make a connection request to the server 
+the client and server creates a connects
+The server send backs the request and the connection is closed 
+
+The user will say get the profile information
+Server sends the data backs 
+Make the API call get the response connection closed 
+Everytime making a call so we have to check wheater the user has authorized or not 
+
+
+Logged in 
+The user first time makes a login requst 
+The server authorize the email id and password and generates aj jwt token 
+(JSON WEB TOKEN) the server will send a jwt and send to the user 
+Whenever the client is sending the request 
+The jwt is sending with the request on the users browser the token is stored 
+Everytime a requst is comming the server will valdiate the token 
+
+To store the data the web came up with cookies 
+
+cookies
+Whenever we logged in the server sends a login cookies along with the response 
+
+User sends the request to sever 
+The server will validate the credentials 
+The server will create a JWT token and wrap the token inside the cookie 
+Now the token will be unique only to the user 
+We send the cookie back 
+Whenever the cookie is comming the browser will store it 
+Then whenever we are sending the request the cookie will travel 
+On every API call the cookie travel and gets  validate 
+We can set the cookie expire date also 
+
+IF the cookie ie expired and then it will
+not logged in and then we have to log in once again
+
+
+When we access the server from the broswer 
+It will show undefined for cookieto parse the cookie 
+we need a middleware cookie pareser 
+
+The middle ware is cookie pareser 
+
+JWT token 
+JSON WEB TOKEN 
+IT segenrates a token 
+JWT is a encrypted token 
+
+The JWT consists of header payload signature 
+
+the token contains the information who is logged in 
+WE can hide the user details inside the JWT token 
+And later we can know who logged in
+
+All The Api has to be secured 
+
+
+We can attach some methods to the schema methods which are related to mongoose 
+Every user have different JWT token 
+
+
+app and router do the same work
+app we are importng from express 
+router also importig from expressthey behave same

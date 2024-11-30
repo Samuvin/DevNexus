@@ -12,4 +12,20 @@ const validateSignUpData = (req) => {
 	}
 };
 
-module.exports = { validateSignUpData };
+const validateEditProfileData = (req) => {
+	const allowedEditfFields = [
+		"firstName",
+		"lastName",
+		"photoUrl",
+		"gender",
+		"about",
+		"skills",
+		"age",
+	];
+	const isEditAllowed = Object.keys(req.body).every((field) =>
+		allowedEditfFields.includes(field)
+	);
+	return isEditAllowed;
+};
+
+module.exports = { validateSignUpData, validateEditProfileData };
