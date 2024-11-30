@@ -186,3 +186,52 @@ Every user have different JWT token
 app and router do the same work
 app we are importng from express 
 router also importig from expressthey behave same
+
+Enum we will use it when we want to restrict our user to certain values
+
+
+pre is a function is mongoose in schema 
+pre is kind of middleware 
+anytime we are saving in the db this middleware is called 
+pre->refers to presave
+its kind of events 
+
+As the dataset increases the query time will increase 
+so that we need indexes we can index db to certain fields 
+
+Suppose if we have 1 million records  
+And we want to find search a person 
+it takes more time  
+The db will go one by one and search 
+
+If we query on firstname 
+If we put index on first name
+It will fast 
+
+if we set unique is true mongodb automatically create index for that 
+
+We can also create compound index 
+When we query using two or three fields 
+we can create compound index 
+We need to fix when we have to create a single index or compound index 
+
+Create index unnecessary will also mess
+
+Databases are build using trees 
+When we create lot of indexes it will also be tuff 
+
+
+POST =>
+The job of security is to allow only the security person or certain person 
+POST The user if trying to enter into the database 
+
+The attacker can send anything through the data or api 
+So verify each and every api calls  
+Because saving the data into the database 
+Sanitize well 
+
+Get=>
+In get Api we have to allow only the allowed data 
+Before sending the data we have to authorize it well 
+
+Data leaks are very dangerous 
