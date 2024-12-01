@@ -1,73 +1,81 @@
 const express = require("express");
 const userRouter = express.Router();
+const { userAuth } = require("../middlewares/auth");
 const { User } = require("../models/user");
+const ConnectionRequest = require("../models/ConnectionRequest");
 
-userRouter.get("/user", async (req, res) => {
-	try {
-		const users = await User.find({ emailId: req.body.emailId });
-		if (users.length === 0) {
-			res.status(404).send("User Not Found");
-		} else res.status(200).send(users);
-	} catch (err) {
-		res.status(400).send("Something went wrong");
-	}
-});
+const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skills";
 
-userRouter.get("/feed", async (req, res) => {
+userRouter.get("/requests/received", userAuth, async (req, res) => {
 	try {
-		const users = await User.find({});
-		if (users.length === 0) {
-			res.status(404).send("User Not Found");
-		} else res.status(200).send(users);
-	} catch (err) {
-		res.status(400).send("Something went wrong");
-	}
-});
-
-userRouter.delete("/user", async (req, res) => {
-	try {
-		const user = await User.findByIdAndDelete(req.body.userId);
-		if (!user) {
-			res.status(404).send("User Not Found");
-		} else res.status(200).send("User deleted successfully");
-	} catch (err) {
-		res.status(400).send("Something went wrong");
-	}
-});
-
-userRouter.patch("/user/:userId", async (req, res) => {
-	const userId = req.params?.userId;
-	const data = req.body;
-	try {
-		const ALLOWED_UPDATES = [
+		const loggedInUser = req.user;
+		const Connections = await ConnectionRequest.find({
+			toUserId: loggedInUser._id,
+			status: "interested",
+		}).populate("fromUserId", [
+			"firstName",
+			"lastName",
 			"photoUrl",
 			"about",
-			"gender",
-			"age",
 			"skills",
-			"emailId",
-		];
-		const isUpdateAllowed = Object.keys(data).every((k) => {
-			return ALLOWED_UPDATES.includes(k);
-		});
-		if (!isUpdateAllowed) {
-			throw new Error("Update Not Allowed");
-		}
-		if (Array.isArray(data?.skills) && data.skills.length > 10) {
-			throw new Error("Skills should not exceed 10");
-		}
-		const user = await User.findByIdAndUpdate({ _id: userId }, data, {
-			returnDocument: "after",
-			runValidators: true,
-		});
-		if (!user) {
-			res.status(404).send("User Not Found");
-		} else res.status(200).send("User Updated Successfully");
+		]);
+		res.status(200).json({ message: "Data Send Successfully", Connections });
 	} catch (err) {
-		console.log(err);
-		res
-			.status(400)
-			.send({ status: "Something went wrong", message: err.message });
+		res.status(400).send("Something went wrong");
+	}
+});
+
+userRouter.get("/connections", userAuth, async (req, res) => {
+	try {
+		const loggedInUser = req.user;
+		const connections = await ConnectionRequest.find({
+			$or: [
+				{ fromUserId: loggedInUser._id, status: "accepted" },
+				{ toUserId: loggedInUser._id, status: "accepted" },
+			],
+		})
+			.populate("fromUserId", USER_SAFE_DATA)
+			.populate("toUserId", USER_SAFE_DATA);
+		const data = connections.map((row) => {
+			if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
+				return row.toUserId;
+			}
+			return row.fromUserId;
+		});
+		res.status(200).json({ message: "Data Send Successfully", data });
+	} catch (err) {
+		res.status(400).send({ message: err.message });
+	}
+});
+
+userRouter.get("/feed", userAuth, async (req, res) => {
+	try {
+		const loggedInUser = req.user;
+		const page = parseInt(req.query.page) || 1;
+		const limit = parseInt(req.query.limit) || 10;
+		const skip = (page - 1) * limit;
+
+		const connections = await ConnectionRequest.find({
+			$or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
+		}).select("fromUserId toUserId");
+
+		const hideUsersFromFeed = new Set();
+		connections.forEach((user) => {
+			hideUsersFromFeed.add(user.fromUserId.toString());
+			hideUsersFromFeed.add(user.toUserId.toString());
+		});
+		const users = await User.find({
+			$and: [
+				{ _id: { $nin: Array.from(hideUsersFromFeed) } },
+				{ _id: { $ne: loggedInUser._id } },
+			],
+		})
+			.select(USER_SAFE_DATA)
+			.skip(skip)
+			.limit(limit);
+		res.status(200).send(users);
+	} catch (err) {
+		res.status(400).json({ message: err.message });
 	}
 });
 
