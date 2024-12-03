@@ -7,6 +7,8 @@ import { BASE_URL } from "../utils/constants";
 const Login = () => {
 	const [emailId, setEmailId] = useState("admin@gmail.com");
 	const [password, setPassword] = useState("Admin@123");
+	const [error, setError] = useState("");
+	const [showToast, setShowToast] = useState(false);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
@@ -24,12 +26,22 @@ const Login = () => {
 			dispatch(addUser(res.data));
 			return navigate("/");
 		} catch (err) {
-			console.log("Error in Login " + err.message);
+			setError(err?.response?.data?.data || "Something Went Wrong");
+			setShowToast(true);
+			setTimeout(() => {
+				setShowToast(false);
+			}, 2000);
 		}
 	};
-
 	return (
 		<div className="hero bg-base-200 min-h-screen">
+			{showToast && (
+				<div className="toast toast-top toast-center">
+					<div className="alert alert-info">
+						<span>{error}</span>
+					</div>
+				</div>
+			)}
 			<div className="hero-content flex-col lg:flex-row-reverse">
 				<div className="text-center lg:text-left">
 					<h1 className="text-5xl font-bold">Login now!</h1>
