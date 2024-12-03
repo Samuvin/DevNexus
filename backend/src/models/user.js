@@ -53,6 +53,8 @@ const userScheme = new mongoose.Schema(
 				if (!validator.isURL(value))
 					throw new Error("Invalid URL for profile : " + value);
 			},
+			default:
+				"https://media.newyorker.com/photos/66ba72ad48c45ec2854f7f13/3:2/w_2559,h_1706,c_limit/Anderson-Musk-PoliticalActivism.jpg",
 		},
 		about: {
 			type: String,
