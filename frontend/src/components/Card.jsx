@@ -16,27 +16,43 @@ const UserCard = ({ user }) => {
 				{ withCredentials: true }
 			);
 			dispatch(removeUserFromFeed(userId));
-		} catch (err) {}
+		} catch (err) {
+			console.error(err);
+		}
 	};
 
 	return (
-		<div className="card bg-base-300 w-96 shadow-xl">
-			<figure>
-				{photoUrl && <img src={user.photoUrl} alt="photo" />}
-				{!photoUrl && <RxAvatar size={250} />}
+		<div className="card bg-base-300 w-96 shadow-2xl rounded-lg hover:shadow-2xl transition-all transform hover:scale-105 h-[500px]">
+			<figure className="relative w-full">
+				<div className="w-full h-64 overflow-hidden rounded-t-lg">
+					{photoUrl ? (
+						<img
+							src={photoUrl}
+							alt="photo"
+							className="w-full h-full object-cover"
+						/>
+					) : (
+						<RxAvatar size={250} className="mx-auto my-4 text-primary" />
+					)}
+				</div>
 			</figure>
-			<div className="card-body">
-				<h2 className="card-title">{firstName + " " + lastName}</h2>
-				{age && gender && <p>{age + ", " + gender}</p>}
-				<p>{about}</p>
-				<div className="card-actions justify-center my-4">
+			<div className="card-body text-white">
+				<h2 className="card-title text-2xl font-bold text-primary">
+					{firstName + " " + lastName}
+				</h2>
+
+				{age && gender && (
+					<p className="text-sm text-neutral-content">{age + ", " + gender}</p>
+				)}
+				<p className="text-sm text-neutral-content mt-2">{about}</p>
+				<div className="card-actions justify-center my-4 space-x-4">
 					<button
-						className="btn btn-primary"
+						className="btn btn-outline btn-secondary hover:bg-secondary hover:text-white hover:shadow-lg transition-all"
 						onClick={() => handleSendRequest("ignored", _id)}>
 						Ignore
 					</button>
 					<button
-						className="btn btn-secondary"
+						className="btn btn-outline btn-primary hover:bg-primary hover:text-white hover:shadow-lg transition-all"
 						onClick={() => handleSendRequest("interested", _id)}>
 						Interested
 					</button>
@@ -45,4 +61,5 @@ const UserCard = ({ user }) => {
 		</div>
 	);
 };
+
 export default UserCard;

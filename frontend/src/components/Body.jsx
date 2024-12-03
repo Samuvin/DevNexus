@@ -5,6 +5,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { useEffect } from "react";
+import Footer from "./Footer";
 const Body = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -32,6 +33,7 @@ const Body = () => {
 		<>
 			<Navbar />
 			<Outlet />
+			<Footer />
 		</>
 	);
 };

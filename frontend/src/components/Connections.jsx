@@ -19,10 +19,15 @@ const Connections = () => {
 		fetchConnections();
 	}, []);
 	if (!connections) return;
-	if (connections.length === 0) return <h1>No Connections Found</h1>;
+	if (connections.length === 0)
+		return (
+			<h1 className="text-3xl font-bold text-center mt-40 text-white mb-6">
+				No Connections Found
+			</h1>
+		);
 	return (
 		<div className="text-center my-10">
-			<h1 className="text-bold text-black text-3xl">Connections</h1>
+			<h1 className="text-3xl font-bold text-white mb-6">Connections</h1>
 
 			{connections.map((connection) => {
 				const { _id, firstName, lastName, photoUrl, age, gender, about } =
@@ -31,24 +36,24 @@ const Connections = () => {
 				return (
 					<div
 						key={_id}
-						className=" flex m-4 p-4 rounded-lg bg-base-300 w-1/2 mx-auto">
+						className="flex items-center  p-6 m-4 rounded-lg shadow-lg bg-neutral-focus border border-neutral-content hover:bg-neutral hover:shadow-xl transition-all max-w-3xl mx-auto">
 						<div>
-							<div className="avatar">
-								<div className="ring-primary ring-offset-base-100 w-24 rounded-full ring ring-offset-2">
-									<img
-										alt="photo"
-										className="w-20 h-20 rounded-full object-cover"
-										src={photoUrl}
-									/>
-								</div>
-							</div>
+							<img
+								alt="User Avatar"
+								className="w-20 h-20 rounded-full object-cover"
+								src={photoUrl}
+							/>
 						</div>
-						<div className="text-left mx-4 ">
-							<h2 className="font-bold text-xl">
-								{firstName + " " + lastName}
+						<div className="text-left mx-6">
+							<h2 className="text-xl font-semibold text-white">
+								{firstName} {lastName}
 							</h2>
-							{age && gender && <p>{age + ", " + gender}</p>}
-							<p>{about}</p>
+							{age && gender && (
+								<p className="text-sm text-neutral-content">
+									{age}, {gender}
+								</p>
+							)}
+							<p className="text-neutral-content text-sm">{about}</p>
 						</div>
 					</div>
 				);
