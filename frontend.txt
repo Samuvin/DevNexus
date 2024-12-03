@@ -1,0 +1,20 @@
+CORS ORIGIN
+
+We cannot make api calls to different origin 
+ORIGIN we send request 1111 to 2222
+
+
+If we send request from domain udemy to domain udemy its ok
+This cors error is browser error 
+Postman dont bother cors error 
+
+But browser consider it as trouble
+We are making request from localhost to localhost
+it will also cause error
+
+Because the PORT matters
+
+
+IF we are not on the same domain 
+If we are not using https browsers dont set the cookies automatically 
+To that we need to configure cors credentials true
