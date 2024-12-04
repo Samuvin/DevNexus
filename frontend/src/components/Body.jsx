@@ -19,7 +19,7 @@ const Body = () => {
 			dispatch(addUser(user.data));
 		} catch (err) {
 			if (err.code === 401) {
-				navigate("/login");
+				navigate("/");
 			}
 			console.log("Error Found in Finding User " + err.message);
 		}
