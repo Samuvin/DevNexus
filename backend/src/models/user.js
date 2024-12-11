@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+
 const userScheme = new mongoose.Schema(
 	{
 		firstName: {
@@ -41,11 +42,6 @@ const userScheme = new mongoose.Schema(
 				values: ["male", "female", "others"],
 				message: "{VALUE} is not a valid gender",
 			},
-			// validate(value) {
-			// 	if (!["male", "female", "others"].includes(value)) {
-			// 		throw new Error("Gender data is not valid");
-			// 	}
-			// },
 		},
 		photoUrl: {
 			type: String,
@@ -63,8 +59,87 @@ const userScheme = new mongoose.Schema(
 		skills: {
 			type: [String],
 		},
+		badges: {
+			type: [String],
+			default: [],
+		},
+		integrityStatus: {
+			type: String,
+			enum: {
+				values: ["clean", "violated"],
+				message: "{VALUE} is not a valid integrity status",
+			},
+			default: "clean",
+		},
+		violationReports: {
+			type: [
+				{
+					reportId: {
+						type: mongoose.Schema.Types.ObjectId,
+					},
+					description: {
+						type: String,
+						maxlength: 500,
+					},
+					resolved: {
+						type: Boolean,
+						default: false,
+					},
+				},
+			],
+			default: [],
+		},
+		events: {
+			type: [
+				{
+					eventId: {
+						type: mongoose.Schema.Types.ObjectId,
+					},
+					title: {
+						type: String,
+					},
+					status: {
+						type: String,
+						enum: ["upcoming", "attended", "missed"],
+					},
+				},
+			],
+			default: [],
+		},
+		groups: {
+			type: [
+				{
+					groupId: {
+						type: mongoose.Schema.Types.ObjectId,
+					},
+					name: {
+						type: String,
+					},
+				},
+			],
+			default: [],
+		},
+		projects: {
+			type: [
+				{
+					projectId: {
+						type: mongoose.Schema.Types.ObjectId,
+					},
+					title: {
+						type: String,
+					},
+					description: {
+						type: String,
+					},
+					technologies: {
+						type: [String],
+					},
+				},
+			],
+			default: [],
+		},
 	},
-	{ timestamp: true }
+	{ timestamps: true }
 );
 
 userScheme.methods.getJWT = async function () {

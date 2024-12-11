@@ -12,6 +12,10 @@ const EditProfile = ({ user }) => {
 	const [age, setAge] = useState(user.age || "");
 	const [gender, setGender] = useState(user.gender || "");
 	const [about, setAbout] = useState(user.about || "");
+	const [skills, setSkills] = useState(user.skills || "");
+	const [badges, setBadges] = useState(user.badges || "");
+	const [events, setEvents] = useState(user.events || "");
+	const [projects, setProjects] = useState(user.projects || "");
 	const [error, setError] = useState("");
 	const dispatch = useDispatch();
 	const [showToast, setShowToast] = useState(false);
@@ -28,6 +32,10 @@ const EditProfile = ({ user }) => {
 					age,
 					gender,
 					about,
+					skills,
+					badges,
+					events,
+					projects,
 				},
 				{ withCredentials: true }
 			);
