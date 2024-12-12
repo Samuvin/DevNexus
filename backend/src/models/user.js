@@ -54,88 +54,20 @@ const userScheme = new mongoose.Schema(
 		},
 		about: {
 			type: String,
-			default: "This is a default about of the user",
+			default:
+				"Code is like humor. When you have to explain it, it’s bad. – Cory House",
 		},
 		skills: {
 			type: [String],
+			default: "Problem-solving",
 		},
 		badges: {
 			type: [String],
-			default: [],
-		},
-		integrityStatus: {
-			type: String,
-			enum: {
-				values: ["clean", "violated"],
-				message: "{VALUE} is not a valid integrity status",
-			},
-			default: "clean",
+			default: "Programmmer",
 		},
 		violationReports: {
-			type: [
-				{
-					reportId: {
-						type: mongoose.Schema.Types.ObjectId,
-					},
-					description: {
-						type: String,
-						maxlength: 500,
-					},
-					resolved: {
-						type: Boolean,
-						default: false,
-					},
-				},
-			],
-			default: [],
-		},
-		events: {
-			type: [
-				{
-					eventId: {
-						type: mongoose.Schema.Types.ObjectId,
-					},
-					title: {
-						type: String,
-					},
-					status: {
-						type: String,
-						enum: ["upcoming", "attended", "missed"],
-					},
-				},
-			],
-			default: [],
-		},
-		groups: {
-			type: [
-				{
-					groupId: {
-						type: mongoose.Schema.Types.ObjectId,
-					},
-					name: {
-						type: String,
-					},
-				},
-			],
-			default: [],
-		},
-		projects: {
-			type: [
-				{
-					projectId: {
-						type: mongoose.Schema.Types.ObjectId,
-					},
-					title: {
-						type: String,
-					},
-					description: {
-						type: String,
-					},
-					technologies: {
-						type: [String],
-					},
-				},
-			],
+			type: [mongoose.Schema.Types.ObjectId],
+			ref: "Report",
 			default: [],
 		},
 	},

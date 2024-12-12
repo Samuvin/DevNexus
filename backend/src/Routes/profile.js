@@ -1,9 +1,9 @@
 const express = require("express");
-const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const profileRouter = express.Router();
 const { userAuth } = require("../middlewares/auth");
 const { validateEditProfileData } = require("../utils/validation");
+const e = require("express");
 profileRouter.get("/view", userAuth, async (req, res) => {
 	try {
 		const user = req.user;
@@ -47,6 +47,22 @@ profileRouter.patch("/edit", userAuth, async (req, res) => {
 		});
 	} catch (err) {
 		res.status(400).send(`Validation Error: ${err.message}`);
+	}
+});
+
+profileRouter.post("/avatar", userAuth, async (req, res) => {
+	try {
+		const { content, image } = req.body;
+		const user = req.user;
+		if (image) {
+			const imgResult = await cloudinary.uploader.upload(image);
+			user.photoUrl = imgResult.secure_url;
+		}
+		await user.save();
+		res.status(201).json({ message: "Success", data: user });
+	} catch (error) {
+		console.error("Error in createPost controller:", error);
+		res.status(500).json({ message: "Server error" });
 	}
 });
 

@@ -6,7 +6,6 @@ const { User } = require("../models/user");
 
 Router.post("/reportUser", userAuth, async (req, res) => {
 	try {
-		console.log(User);
 		const { reportedUser, description, violationType } = req.body;
 		const reporter = req.user;
 		if (!reportedUser || !description || !violationType || !reporter) {
@@ -25,6 +24,7 @@ Router.post("/reportUser", userAuth, async (req, res) => {
 		}
 		console.log(Report);
 		const user = await User.findById(reportedUser);
+
 		if (!user) {
 			return res.status(400).json({ error: "Reported user does not exist" });
 		}
@@ -41,8 +41,9 @@ Router.post("/reportUser", userAuth, async (req, res) => {
 			reporter,
 		});
 
+		user.violationReports.push(report._id);
 		await report.save();
-
+		await user.save();
 		res.status(201).json({
 			message: "Report created successfully",
 			data: report,
@@ -52,6 +53,19 @@ Router.post("/reportUser", userAuth, async (req, res) => {
 		res
 			.status(500)
 			.json({ status: "failed", message: "Internal Server Error" });
+	}
+});
+
+Router.get("/reportData/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const reports = await User.findById(id).populate("violationReports");
+
+		res
+			.status(200)
+			.json({ message: "success", data: reports.violationReports });
+	} catch (err) {
+		res.status(400).send({ message: err.message });
 	}
 });
 

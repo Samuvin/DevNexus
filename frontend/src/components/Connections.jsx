@@ -3,20 +3,22 @@ import { BASE_URL } from "../utils/constants";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnection } from "../utils/connectionSlice";
-
+import { Loader } from "lucide-react";
 const Connections = () => {
 	const connections = useSelector((store) => store.connections);
 	const dispatch = useDispatch();
-
-	const [reportModalIsOpen, setReportModalIsOpen] = useState(false); // State for report modal
-	const [userModalIsOpen, setUserModalIsOpen] = useState(false); // State for user data modal
+	const [violationReport, setViolationReport] = useState([]);
+	const [violationModal, setviolationModal] = useState(false);
+	const [reportModalIsOpen, setReportModalIsOpen] = useState(false);
+	const [loading, setloading] = useState(false);
+	const [userModalIsOpen, setUserModalIsOpen] = useState(false);
 	const [reportData, setReportData] = useState({
 		reportedUser: "",
 		description: "",
 		violationType: "cheating",
 	});
-	const [toastIsVisible, setToastIsVisible] = useState(false); // State to control toast visibility
-	const [userData, setUserData] = useState(null); // State to hold user data for modal
+	const [toastIsVisible, setToastIsVisible] = useState(false);
+	const [userData, setUserData] = useState(null);
 
 	const fetchConnections = async () => {
 		try {
@@ -45,9 +47,9 @@ const Connections = () => {
 				}
 			);
 			console.log("Report submitted:", res.data);
-			setReportModalIsOpen(false); // Close the report modal
-			setToastIsVisible(true); // Show toast after successful report submission
-			setTimeout(() => setToastIsVisible(false), 3000); // Hide toast after 3 seconds
+			setReportModalIsOpen(false);
+			setToastIsVisible(true);
+			setTimeout(() => setToastIsVisible(false), 3000);
 		} catch (err) {
 			console.error("Error submitting report:", err);
 		}
@@ -55,20 +57,34 @@ const Connections = () => {
 
 	const openReportModal = (userId) => {
 		setReportData({ ...reportData, reportedUser: userId });
-		setReportModalIsOpen(true); // Open the report modal
+		setReportModalIsOpen(true);
 	};
 
 	const openUserDataModal = (userId) => {
-		// Find the user in connections and set it in the state
 		const selectedUser = connections.find((user) => user._id === userId);
 		setUserData(selectedUser);
-		setUserModalIsOpen(true); // Open the user data modal
+		setUserModalIsOpen(true);
 	};
 
 	const closeModal = () => {
-		setReportModalIsOpen(false); // Close report modal
-		setUserModalIsOpen(false); // Close user data modal
-		setUserData(null); // Reset user data when closing the modal
+		setReportModalIsOpen(false);
+		setUserModalIsOpen(false);
+		setUserData(null);
+	};
+
+	const ViolationReports = async (id) => {
+		setloading(true);
+		setviolationModal(true);
+		try {
+			const res = await axios.get(BASE_URL + `/report/reportData/${id}`, {
+				withCredentials: true,
+			});
+			setViolationReport(res.data.data);
+		} catch (err) {
+			console.error("Error fetching violation reports:", err);
+		} finally {
+			setloading(false);
+		}
 	};
 
 	useEffect(() => {
@@ -83,15 +99,12 @@ const Connections = () => {
 				No Connections Found
 			</h1>
 		);
-
 	return (
 		<div className="text-center my-10">
 			<h1 className="text-3xl font-bold text-white mb-6">Connections</h1>
-
 			{connections.map((connection) => {
 				const { _id, firstName, lastName, photoUrl, age, gender, about } =
 					connection;
-
 				return (
 					<div
 						key={_id}
@@ -125,11 +138,15 @@ const Connections = () => {
 								className="btn btn-outline btn-sm btn-error mt-4 ml-4 px-4 py-2">
 								Report
 							</button>
+							<button
+								onClick={() => ViolationReports(_id)}
+								className="btn btn-outline btn-sm btn-error mt-4 ml-4 px-4 py-2">
+								Report
+							</button>
 						</div>
 					</div>
 				);
 			})}
-
 			<div
 				className={`modal ${userModalIsOpen ? "modal-open" : ""}`}
 				onClick={closeModal}>
@@ -174,87 +191,18 @@ const Connections = () => {
 								<img
 									src={
 										userData.photoUrl ? userData.photoUrl : "default-photo-url"
-									} // Use a default image if no photo URL
+									}
 									alt="User Avatar"
 									className="w-32 h-32 rounded-full object-cover border-2 border-neutral-400"
 								/>
 							</div>
 
-							{/* Badges */}
 							<p>
 								Badges:{" "}
 								{userData.badges && userData.badges.length > 0
 									? userData.badges.join(", ")
 									: "Data not provided"}
 							</p>
-
-							{/* Integrity Status */}
-							<p>
-								Integrity Status:{" "}
-								{userData.integrityStatus
-									? userData.integrityStatus
-									: "Data not provided"}
-							</p>
-
-							{/* Violation Reports */}
-							<div>
-								<h3 className="mt-4 text-lg font-semibold">
-									Violation Reports:
-								</h3>
-								<ul>
-									{userData.violationReports &&
-									userData.violationReports.length > 0
-										? userData.violationReports.map((report, index) => (
-												<li key={index}>
-													{report.description} -{" "}
-													{report.resolved ? "Resolved" : "Pending"}
-												</li>
-										  ))
-										: "Data not provided"}
-								</ul>
-							</div>
-
-							{/* Events */}
-							<div>
-								<h3 className="mt-4 text-lg font-semibold">Events:</h3>
-								<ul>
-									{userData.events && userData.events.length > 0
-										? userData.events.map((event, index) => (
-												<li key={index}>
-													{event.title} - {event.status}
-												</li>
-										  ))
-										: "Data not provided"}
-								</ul>
-							</div>
-
-							{/* Groups */}
-							<div>
-								<h3 className="mt-4 text-lg font-semibold">Groups:</h3>
-								<ul>
-									{userData.groups && userData.groups.length > 0
-										? userData.groups.map((group, index) => (
-												<li key={index}>{group.name}</li>
-										  ))
-										: "Data not provided"}
-								</ul>
-							</div>
-
-							{/* Projects */}
-							<div>
-								<h3 className="mt-4 text-lg font-semibold">Projects:</h3>
-								<ul>
-									{userData.projects && userData.projects.length > 0
-										? userData.projects.map((project, index) => (
-												<li key={index}>
-													<strong>{project.title}</strong> -{" "}
-													{project.description}
-													<p>Technologies: {project.technologies.join(", ")}</p>
-												</li>
-										  ))
-										: "Data not provided"}
-								</ul>
-							</div>
 						</div>
 					)}
 
@@ -269,12 +217,50 @@ const Connections = () => {
 			</div>
 
 			<div
+				className={`modal ${violationModal ? "modal-open" : ""}`}
+				onClick={() => setviolationModal(false)}>
+				{loading ? (
+					<Loader className="animate-spin" />
+				) : (
+					<div
+						className="modal-box max-h-[80vh] overflow-y-auto"
+						onClick={(e) => e.stopPropagation()}>
+						<h2 className="text-xl font-bold mb-4">Violation Reports</h2>
+						{violationReport.map((data) => {
+							const { description, violationType, updatedAt } = data;
+							return (
+								<div
+									key={data._id}
+									className="rounded-lg p-4 mb-4 shadow-md border border-base-300 bg-base-200 text-base-content">
+									<p className="font-semibold mb-2">
+										<span className="text-sm font-bold">Description:</span>{" "}
+										{description}
+									</p>
+									<p className="mb-2">
+										<span className="text-sm font-bold">Report Type:</span>{" "}
+										{violationType}
+									</p>
+									<p className="mb-2">
+										<span className="text-sm font-bold">Report Date:</span>{" "}
+										{new Date(updatedAt).toLocaleDateString()}
+									</p>
+								</div>
+							);
+						})}
+						<div className="modal-action">
+							<button
+								onClick={() => setviolationModal(false)}
+								className="btn btn-outline btn-sm btn-error">
+								Close
+							</button>
+						</div>
+					</div>
+				)}
+			</div>
+			<div
 				className={`modal ${reportModalIsOpen ? "modal-open" : ""}`}
 				onClick={closeModal}>
-				<div
-					className="modal-box"
-					onClick={(e) => e.stopPropagation()} // Prevent closing modal on form click
-				>
+				<div className="modal-box" onClick={(e) => e.stopPropagation()}>
 					<h2 className="text-xl font-semibold mb-4">Submit a Report</h2>
 					<form onSubmit={handleSubmit}>
 						<div>
@@ -286,7 +272,7 @@ const Connections = () => {
 								name="violationType"
 								value={reportData.violationType}
 								onChange={handleInputChange}
-								className="w-full p-2 mb-4 border border-neutral-400 rounded">
+								className="select select-success select-outline w-full p-2 mt-4 border border-success rounded mb-2">
 								<option value="cheating">Cheating</option>
 								<option value="abuse">Abuse</option>
 								<option value="harassment">Harassment</option>
@@ -306,13 +292,13 @@ const Connections = () => {
 								onChange={handleInputChange}
 								maxLength="500"
 								rows="4"
-								className="w-full p-2 mb-4 border border-neutral-400 rounded"
+								className="textarea textarea-success textarea-outline w-full p-2 mt-4 border border-success rounded"
 							/>
 						</div>
 
 						<button
 							type="submit"
-							className="px-6 py-2 bg-blue-600 text-white rounded">
+							className="btn btn-outline btn-sm btn-primary mt-4 px-4 py-2">
 							Submit Report
 						</button>
 					</form>
@@ -325,8 +311,6 @@ const Connections = () => {
 					</div>
 				</div>
 			</div>
-
-			{/* Toast Notification */}
 			{toastIsVisible && (
 				<div className="toast toast-top toast-center">
 					<div className="alert alert-success">

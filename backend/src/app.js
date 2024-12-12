@@ -2,6 +2,7 @@ const express = require("express");
 const { DBconnect } = require("./config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const cloudinary = require("cloudinary").v2;
 const path = require("path");
 require("dotenv").config();
 DBconnect();
@@ -13,7 +14,14 @@ app.use(
 		credentials: true,
 	})
 );
-app.use(express.json());
+
+cloudinary.config({
+	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+	api_key: process.env.CLOUDINARY_API_KEY,
+	api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+app.use(express.json({ limit: "5mb" }));
 app.use(cookieParser());
 
 const authRouter = require("./Routes/auth");
@@ -28,13 +36,13 @@ app.use("/request", requestRouter);
 app.use("/user", userRouter);
 app.use("/report", reportRouter);
 
-app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+// app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 
-app.get("*", (req, res) => {
-	res.sendFile(
-		path.resolve(__dirname, "..", "..", "frontend", "dist", "index.html")
-	);
-});
+// app.get("*", (req, res) => {
+// 	res.sendFile(
+// 		path.resolve(__dirname, "..", "..", "frontend", "dist", "index.html")
+// 	);
+// });
 
 app.listen(process.env.PORT, () => {
 	console.log("listening on", process.env.PORT);

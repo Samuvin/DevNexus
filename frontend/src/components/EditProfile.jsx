@@ -1,9 +1,10 @@
 import { useState } from "react";
-import Card from "./Card";
+import UserCard from "./UserCard";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import EditImage from "./EditImage";
 
 const EditProfile = ({ user }) => {
 	const [firstName, setFirstName] = useState(user.firstName);
@@ -14,8 +15,6 @@ const EditProfile = ({ user }) => {
 	const [about, setAbout] = useState(user.about || "");
 	const [skills, setSkills] = useState(user.skills || "");
 	const [badges, setBadges] = useState(user.badges || "");
-	const [events, setEvents] = useState(user.events || "");
-	const [projects, setProjects] = useState(user.projects || "");
 	const [error, setError] = useState("");
 	const dispatch = useDispatch();
 	const [showToast, setShowToast] = useState(false);
@@ -28,14 +27,11 @@ const EditProfile = ({ user }) => {
 				{
 					firstName,
 					lastName,
-					photoUrl,
 					age,
 					gender,
 					about,
 					skills,
 					badges,
-					events,
-					projects,
 				},
 				{ withCredentials: true }
 			);
@@ -51,6 +47,7 @@ const EditProfile = ({ user }) => {
 
 	return (
 		<>
+			<EditImage user={user} />
 			<div className="flex justify-center my-10 mb-20">
 				<div className="flex justify-center mx-10">
 					<div className="card bg-base-300 w-96 shadow-xl">
@@ -80,15 +77,6 @@ const EditProfile = ({ user }) => {
 											onChange={(e) => setLastName(e.target.value)}
 										/>
 									</label>
-									<div className="label">
-										<span className="label-text">Photo URL :</span>
-									</div>
-									<input
-										type="text"
-										value={photoUrl}
-										className="input input-bordered w-full max-w-xs"
-										onChange={(e) => setPhotoUrl(e.target.value)}
-									/>
 								</label>
 								<label className="form-control w-full max-w-xs my-2">
 									<div className="label">
@@ -123,6 +111,29 @@ const EditProfile = ({ user }) => {
 										onChange={(e) => setAbout(e.target.value)}
 									/>
 								</label>
+
+								<label className="form-control w-full max-w-xs my-2">
+									<label className="form-control w-full max-w-xs my-2">
+										<div className="label">
+											<span className="label-text">Skills:</span>
+										</div>
+										<input
+											type="text"
+											value={skills}
+											className="input input-bordered w-full max-w-xs"
+											onChange={(e) => setSkills(e.target.value)}
+										/>
+									</label>
+									<div className="label">
+										<span className="label-text">Badges :</span>
+									</div>
+									<input
+										type="text"
+										value={badges}
+										className="input input-bordered w-full max-w-xs"
+										onChange={(e) => setBadges(e.target.value)}
+									/>
+								</label>
 							</div>
 							<p className="text-red-500">{error}</p>
 							<div className="card-actions justify-center m-2">
@@ -133,7 +144,7 @@ const EditProfile = ({ user }) => {
 						</div>
 					</div>
 				</div>
-				<Card user={{ firstName, lastName, photoUrl, age, gender, about }} />
+				<UserCard />
 			</div>
 			{showToast && (
 				<div className="toast toast-top toast-center">
