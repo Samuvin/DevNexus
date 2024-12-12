@@ -36,13 +36,13 @@ app.use("/request", requestRouter);
 app.use("/user", userRouter);
 app.use("/report", reportRouter);
 
-// app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 
-// app.get("*", (req, res) => {
-// 	res.sendFile(
-// 		path.resolve(__dirname, "..", "..", "frontend", "dist", "index.html")
-// 	);
-// });
+app.get("*", (req, res) => {
+	res.sendFile(
+		path.resolve(__dirname, "..", "..", "frontend", "dist", "index.html")
+	);
+});
 
 app.listen(process.env.PORT, () => {
 	console.log("listening on", process.env.PORT);

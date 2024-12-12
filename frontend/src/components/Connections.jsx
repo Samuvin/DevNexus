@@ -46,7 +46,7 @@ const Connections = () => {
 					withCredentials: true,
 				}
 			);
-			console.log("Report submitted:", res.data);
+
 			setReportModalIsOpen(false);
 			setToastIsVisible(true);
 			setTimeout(() => setToastIsVisible(false), 3000);

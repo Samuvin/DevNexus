@@ -65,7 +65,7 @@ requestRouter.post("/review/:status/:requestId", userAuth, async (req, res) => {
 		if (!allowedStatus.includes(status)) {
 			return res.status(400).json({ messaage: "Status not allowed!" });
 		}
-		console.log(loggedInUser._id);
+
 		const connectionRequest = await ConnectionRequest.findOne({
 			_id: requestId,
 			toUserId: loggedInUser._id,

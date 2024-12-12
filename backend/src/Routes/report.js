@@ -22,7 +22,7 @@ Router.post("/reportUser", userAuth, async (req, res) => {
 		if (!validViolationTypes.includes(violationType)) {
 			return res.status(400).json({ error: "Invalid violation type" });
 		}
-		console.log(Report);
+
 		const user = await User.findById(reportedUser);
 
 		if (!user) {
