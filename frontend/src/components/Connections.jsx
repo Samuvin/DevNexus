@@ -141,7 +141,7 @@ const Connections = () => {
 							<button
 								onClick={() => ViolationReports(_id)}
 								className="btn btn-outline btn-sm btn-error mt-4 ml-4 px-4 py-2">
-								Report
+								Violation Reports
 							</button>
 						</div>
 					</div>
@@ -196,13 +196,6 @@ const Connections = () => {
 									className="w-32 h-32 rounded-full object-cover border-2 border-neutral-400"
 								/>
 							</div>
-
-							<p>
-								Badges:{" "}
-								{userData.badges && userData.badges.length > 0
-									? userData.badges.join(", ")
-									: "Data not provided"}
-							</p>
 						</div>
 					)}
 
