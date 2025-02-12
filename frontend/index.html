@@ -10,6 +10,40 @@
 			type="text/javascript"
 			src="https://js-cdn.dynatrace.com/jstag/178598305ee/bf71465tee/30ab0e7e44bda31d_complete.js"
 			crossorigin="anonymous"></script>
+		<script>
+			// Inline script for quick tests, better to move these to app.js
+			function setUserId() {
+				var userId = document.getElementById("userID").value;
+				if (window.dtrum) {
+					window.dtrum.setUserId(userId);
+					console.log("User ID set to:", userId);
+				}
+			}
+
+			function triggerError() {
+				try {
+					// Simulate a custom error
+					throw new Error("This is a test error");
+				} catch (error) {
+					if (window.dtrum) {
+						window.dtrum.reportError(error);
+						console.log("Error reported:", error.message);
+					}
+				}
+			}
+			document.addEventListener("DOMContentLoaded", function () {
+				// Setup and check Dynatrace API availability
+				if (window.dtrum) {
+					console.log("Dynatrace RUM is initialized and ready.");
+				} else {
+					console.log("Dynatrace RUM is not available.");
+				}
+				// Example of setting a custom attribute
+				if (window.dtrum) {
+					window.dtrum.addCustomAttribute("PageType", "TestPage");
+				}
+			});
+		</script>
 	</head>
 	<body>
 		<div id="root"></div>
