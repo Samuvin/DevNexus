@@ -12,15 +12,7 @@
 			crossorigin="anonymous"></script>
 		<script>
 			// Inline script for quick tests, better to move these to app.js
-			function setUserId() {
-				var userId = "test";
-				if (window.dtrum) {
-					window.dtrum.setUserId(userId);
-					console.log("User ID set to:", userId);
-				}
-			}
-			setUserId();
-
+			console.log(window.dtrum);
 			function triggerError() {
 				try {
 					// Simulate a custom error
