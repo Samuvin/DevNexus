@@ -19,6 +19,7 @@
 					console.log("User ID set to:", userId);
 				}
 			}
+			setUserId();
 
 			function triggerError() {
 				try {
@@ -36,6 +37,7 @@
 				if (window.dtrum) {
 					console.log("Dynatrace RUM is initialized and ready.");
 				} else {
+					console.log(window.dtrum);
 					console.log("Dynatrace RUM is not available.");
 				}
 				// Example of setting a custom attribute
